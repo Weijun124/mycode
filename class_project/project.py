@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+import csv
 
-url="https://storage.googleapis.com/kaggle-data-sets/2484412/4214468/bundle/archive.zip?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=gcp-kaggle-com%40kaggle-161607.iam.gserviceaccount.com%2F20221002%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20221002T134239Z&X-Goog-Expires=259200&X-Goog-SignedHeaders=host&X-Goog-Signature=b558edfe38744f52e20bcabf64adc1c50a27fd7ac19fa8cde3d8ca37aea3749823cadd0655bc188a19ed6ff7a49d6599601a4fa376596fbf4c17dceb684995dcd1e98be6e1bf4266b5f4a40d1ee03a1b0b91028f62618968534de6f5209c33851a576a1202fbf806ffb532242438797f1ae183b2bd00fb714e73aa6b5f0a9d23ab2938dd08b23353ad22703c0b552b5eeb51686041e5e878711cf44f43e1ead273a9c2e5e2b9a1dfa8c885b40c65fc51d56df838b9f21dc42f62ebc90fa21c6eb876b45e88a2a5f0d8f12d4486441cde0dcb7b0b649d986ef45759a735a175d82c1a2c7134f4a006f54188bd2898f189ce7176e661eb3eb22729f957c63b07b9"
-wget
+csvtoyota=open("toyota.csv","a")
+with open('toyota_cars.csv',mode='r') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    for row in csv_reader:
+        print(row, file=csvtoyota)
