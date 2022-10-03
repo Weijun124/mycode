@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-import csv
+import pandas as pd
 
-csvtoyota=open("toyota.csv","a")
-with open('toyota_cars.csv',mode='r') as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter=',')
-    for row in csv_reader:
-        print(row, file=csvtoyota)
+def main():
+    csv=pd.read_csv("data.csv")
+    print(csv['model'])
+main()
