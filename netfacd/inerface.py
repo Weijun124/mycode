@@ -10,3 +10,5 @@ for i in netifaces.interfaces():
         print(netifaces.ifaddresses(i)[netifaces.AF_INET][0]['addr'])
     except:
         print('Could not collect adapter information')
+
+
