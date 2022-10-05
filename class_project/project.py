@@ -20,7 +20,7 @@ def model_choose(model_opt,model_list):
             if model['model'].strip().lower()==model_input.strip().lower():
                 NEWLIST.append(model)
         price_choose()
-        NEWLIST.to_excel("test1.xls", index=False)
+        pd.DataFrame(NEWLIST).to_excel("test1.xls", index=False)
     else:
         print(CSVSORT)
 
