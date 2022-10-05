@@ -108,6 +108,6 @@ while True:
         inventory.clear()
         inventory.append("Tank")
     if move[0] =='fire' and "Tank" in inventory:
-        print(" You destory your house with monster")
+        print(" You destoried your house with monster")
         print(" You win, game over")
         break
