@@ -12,41 +12,32 @@ import pyfiglet as pf
 CSV=pd.read_csv("toyota_data.csv")
 CSVSORT=CSV.sort_values('model',ignore_index=True)
 DATAS=CSVSORT.to_dict(orient='records')
-NEWLIST=[]
 
 # Function for filter the model data
 def model_choose():
     model_list=model_set(CSVSORT['model'])
     model_input=input(f"What type of model you are looking for? We have {model_list}\n ")
-    for index, model in CSVSORT.copy(deep=False).iterrows():
-        if model['model'].strip().lower()!=model_input.strip().lower():
-            CSVSORT.drop(index, inplace=True)
-        
-        #         NEWLIST.append(model
-        # pd.DataFrame(NEWLIST).to_excel("test1.xls", index=False)
-
-
-def convert_to_excel():
-    convert=input("Do you want to convert it to a excel file? [Y/n]")
-    if(convert.lower()=='y'):
-        pd.DataFrame(CSVSORT).to_excel("test.xlsx", index=False)
+    model_search=False
+    for name in model_list:
+        if name.strip().lower()==model_input.strip().lower():
+            model_search=True
+    if model_search:
+        for index, model in CSVSORT.copy(deep=False).iterrows():
+            if model['model'].strip().lower()!=model_input.strip().lower():
+                CSVSORT.drop(index, inplace=True)
     else:
-        print(CSVSORT)
+        print(ft.apply("\nInvalid input, Please try again\n", 'red'))
+        model_choose()       
+        # pd.DataFrame(NEWLIST).to_excel("test1.xls", index=False)
 
 # Function for filter the price level
 def price_choose():
-    min_price=input("Enter the least price you want\n")
-    max_price=input("Enter the highest price you want\n")
+    min_price=input("Enter the least price you want? (Lowest price in your current model is ${:,})\n".format(CSVSORT['price'].min()))
+    max_price=input("Enter the highest price you want? (Highest price in your current model is ${:,})\n".format(CSVSORT['price'].max()))
     # Use list.copy() to avoid locate bug if you try to remove element from origional list
     for index, price in CSVSORT.copy(deep=False).iterrows():
-        if price['price']<int(min_price) or price['price']>int(max_price):
+        if price['price']<int(min_price) or price['price']>int(max_price): 
             CSVSORT.drop(index, inplace=True)
-
-    # for ele in NEWLIST.copy():
-    #     if ele['price']<int(min_price) or ele['price']>int(max_price):
-    #         NEWLIST.remove(ele)
-    #     else:
-    #         pass
 
 def fuel_type_choose():
     fuel_type_list=fuel_type_set(CSVSORT['fuelType'])
@@ -75,6 +66,12 @@ def fuel_type_set(fueltype):
             pass
     return fuel_list
 
+def convert_to_excel():
+    convert=input("Do you want to convert it to a excel file? [Y/n]")
+    if(convert.lower()=='y'):
+        pd.DataFrame(CSVSORT).to_excel("test.xlsx", index=False)
+    else:
+        print(CSVSORT)
 
 
 def main():
@@ -86,7 +83,6 @@ def main():
         fuel_type_choose()
     else:
         convert_to_excel()
-
 
 if __name__ == "__main__":
     main()
