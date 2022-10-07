@@ -14,7 +14,7 @@ def model_choose(csvsort):
     model_list=select_set(csvsort['model'])
     model_input=input(f" What type of model you are looking for?\nWe have {model_list}\n>")
     print(ft.apply("\nCreating the table...", 'green_bg'))
-    check_input(model_list,'model',model_input,csvsort,model_choose)
+    single_string_input(model_list,'model',model_input,csvsort,model_choose)
 
 def price_choose(csvsort):
     """Function for filter the price level"""
@@ -22,34 +22,19 @@ def price_choose(csvsort):
  between ${csvsort['price'].min():,} and ${csvsort['price'].max():,})"
     min_price=input(f" Enter the least price you want? {sentence}\n>")
     max_price=input(f" Enter the highest price you want? {sentence}\n>")
-    try:
-        price_list=[int(min_price),int(max_price)]
-        price_list.sort() #in case user put min_price>max_price, auto fix this bug
-        # Use df.copy() to avoid locate bug if you try to remove element from origional list
-        if price_list[0]>=csvsort['price'].min() and price_list[1]<=csvsort['price'].max():
-            for index, price in csvsort.copy(deep=False).iterrows():
-                if price['price']<price_list[0] or price['price']>price_list[1]:
-                    # Drop the value with current index data when price is not in the range
-                    csvsort.drop(index, inplace=True)
-        else:
-            print(ft.apply("\n Please enter "\
-                 "the price within the range we provided \n"))
-            price_choose(csvsort)
-    except ValueError:
-        print(ft.apply("\n Invalid input, Please try again", 'red_bg'))
-        price_choose(csvsort)
+    range_number_input(min_price,max_price,'price',csvsort,price_choose)
 
 def transmission_type(csvsort):
     """Function for filter the transmission"""
     transmission_list=select_set(csvsort["transmission"])
     type_input=input(f" Based on your selection, we have {transmission_list} for you to choose\n>")
-    check_input(transmission_list,"transmission",type_input,csvsort,transmission_type)
+    single_string_input(transmission_list,"transmission",type_input,csvsort,transmission_type)
 
 def fuel_type_choose(csvsort):
     """Function for filter the fuel type"""
     fuel_type_list=select_set(csvsort['fuelType'])
     type_input=input(f" Based on your selection, we have {fuel_type_list} for you to choose\n>")
-    check_input(fuel_type_list,'fuelType',type_input,csvsort,fuel_type_choose)
+    single_string_input(fuel_type_list,'fuelType',type_input,csvsort,fuel_type_choose)
 
 def select_set(model):
     """Function to create the selection list for model, fuel, and transmission type"""
@@ -61,7 +46,7 @@ def select_set(model):
             pass
     return type_list
 
-def check_input(user_list,search_type,user_input,csvsort,function_name):
+def single_string_input(user_list,search_type,user_input,csvsort,function_name):
     """ Helping function based on
         model, fuel and transmission
         input, and filter the result """
@@ -77,6 +62,27 @@ def check_input(user_list,search_type,user_input,csvsort,function_name):
                 csvsort.drop(index, inplace=True)
     else:
         print(ft.apply("\n Invalid input. Please try again", 'red_bg'))
+        function_name(csvsort)
+
+def range_number_input(lowest_value,highest_value,search_type,csvsort,function_name):
+    """ Helping function based on
+        input range (number), and
+        filter the result """
+    try:
+        price_list=[int(lowest_value),int(highest_value)]
+        price_list.sort() #in case user put min_price>max_price, auto fix this bug
+        # Use df.copy() to avoid locate bug if you try to remove element from origional list
+        if price_list[0]>=csvsort[search_type].min() and price_list[1]<=csvsort[search_type].max():
+            for index, price in csvsort.copy(deep=False).iterrows():
+                if price[search_type]<price_list[0] or price[search_type]>price_list[1]:
+                    # Drop the value with current index data when price is not in the range
+                    csvsort.drop(index, inplace=True)
+        else:
+            print(ft.apply("\n Please enter "\
+                 "the number within the range we provided \n"))
+            price_choose(csvsort)
+    except ValueError:
+        print(ft.apply("\n Invalid input, Please try again", 'red_bg'))
         function_name(csvsort)
 
 def convert_to_excel(csvsort):
