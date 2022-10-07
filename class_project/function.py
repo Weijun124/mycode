@@ -7,7 +7,10 @@ import fontstyle as ft
 import pyfiglet as pf
 
 def model_choose(csvsort):
-    """Function for filter the model data"""
+    """Function for filter the model data
+        Could use df.loc for multiple model choose
+        But got stuck when handle the error. In this
+        case, user only can do single search"""
     model_list=select_set(csvsort['model'])
     model_input=input(f" What type of model you are looking for?\nWe have {model_list}\n>")
     print(ft.apply("\nCreating the table...", 'green_bg'))
@@ -21,11 +24,12 @@ def price_choose(csvsort):
     max_price=input(f" Enter the highest price you want? {sentence}\n>")
     try:
         price_list=[int(min_price),int(max_price)]
-        price_list.sort()
+        price_list.sort() #in case user put min_price>max_price, auto fix this bug
         # Use df.copy() to avoid locate bug if you try to remove element from origional list
         if price_list[0]>=csvsort['price'].min() and price_list[1]<=csvsort['price'].max():
             for index, price in csvsort.copy(deep=False).iterrows():
                 if price['price']<price_list[0] or price['price']>price_list[1]:
+                    # Drop the value with current index data when price is not in the range
                     csvsort.drop(index, inplace=True)
         else:
             print(ft.apply("\n Please enter "\
@@ -48,7 +52,7 @@ def fuel_type_choose(csvsort):
     check_input(fuel_type_list,'fuelType',type_input,csvsort,fuel_type_choose)
 
 def select_set(model):
-    """Function to create the selection list for model type and fuel type"""
+    """Function to create the selection list for model, fuel, and transmission type"""
     type_list=[]
     for i in model:
         if i not in type_list:
@@ -58,7 +62,9 @@ def select_set(model):
     return type_list
 
 def check_input(user_list,search_type,user_input,csvsort,function_name):
-    """Function to check the user input"""
+    """ Helping function based on
+        model, fuel and transmission
+        input, and filter the result """
     user_search=False
     # Verify the user input is valid or not
     for name in user_list:
@@ -79,16 +85,16 @@ def convert_to_excel(csvsort):
     if convert.lower()=='y':
         file_name=input("Please enter the name for the file\n>")
         try:
-            print(ft.apply("\nCreating the excel...", 'green_bg'))
+            print(ft.apply("\nCreating the Excel...", 'green_bg'))
             pd.DataFrame(csvsort).to_excel(f"{file_name}.xlsx", index=False)
             end="File Is Created! Thanks For Using"
             print(ft.apply(pf.figlet_format(end, font = "digital" ), 'yellow'))
         except ValueError:
-            print(ft.apply("\n Invalid input, Please try again\n", 'red-bg'))
+            print(ft.apply("\n Invalid input, Please try again\n", 'red_bg'))
             convert_to_excel(csvsort)
     elif convert.lower()=='n':
         print(csvsort)
-        print(f' Total results are {len(csvsort.index)}')
+        print(f' Result: Total {len(csvsort.index)} vehicles meet your requirement')
         end="Thanks For Using"
         print(ft.apply(pf.figlet_format(end, font = "digital" ), 'yellow'))
     else:
