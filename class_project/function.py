@@ -6,35 +6,44 @@ import pandas as pd
 import fontstyle as ft
 import pyfiglet as pf
 
-def model_choose(csvsort):
+def model_choose(pandas_data):
     """Function for filter the model data
         Could use df.loc for multiple model choose
         But got stuck when handle the error. In this
         case, user only can do single search"""
-    model_list=select_set(csvsort['model'])
+    model_list=select_set(pandas_data['model'])
     model_input=input(f" What type of model you are looking for?\nWe have {model_list}\n>")
     print(ft.apply("\nCreating the table...", 'green_bg'))
-    single_string_input(model_list,'model',model_input,csvsort,model_choose)
+    single_string_input(model_list,'model',model_input,pandas_data,model_choose)
 
-def price_choose(csvsort):
-    """Function for filter the price level"""
+def price_choose(pandas_data):
+    """ Function for filter the price level"""
     sentence=f" (Your current model price range is\n\
- between ${csvsort['price'].min():,} and ${csvsort['price'].max():,})"
-    min_price=input(f" Enter the least price you want? {sentence}\n>")
+ between ${pandas_data['price'].min():,} and ${pandas_data['price'].max():,})"
+    min_price=input(f" Enter the lowest price you want? {sentence}\n>")
     max_price=input(f" Enter the highest price you want? {sentence}\n>")
-    range_number_input(min_price,max_price,'price',csvsort,price_choose)
+    range_number_input(min_price,max_price,'price',pandas_data,price_choose)
 
-def transmission_type(csvsort):
+def mileage_choose(pandas_data):
+    """ Function for filter
+        the mileage range """
+    sentence=f" (Your current mileage range is\n\
+ between {pandas_data['mileage'].min():,} miles and {pandas_data['mileage'].max():,} miles)"
+    min_mileage=input(f" Enter the minimum mileage you want? {sentence}\n>")
+    max_mileage=input(f" Enter the maximum mileage you want? {sentence}\n>")
+    range_number_input(min_mileage,max_mileage,'mileage',pandas_data,mileage_choose)
+
+def transmission_type(pandas_data):
     """Function for filter the transmission"""
-    transmission_list=select_set(csvsort["transmission"])
+    transmission_list=select_set(pandas_data["transmission"])
     type_input=input(f" Based on your selection, we have {transmission_list} for you to choose\n>")
-    single_string_input(transmission_list,"transmission",type_input,csvsort,transmission_type)
+    single_string_input(transmission_list,"transmission",type_input,pandas_data,transmission_type)
 
-def fuel_type_choose(csvsort):
+def fuel_type_choose(pandas_data):
     """Function for filter the fuel type"""
-    fuel_type_list=select_set(csvsort['fuelType'])
+    fuel_type_list=select_set(pandas_data['fuelType'])
     type_input=input(f" Based on your selection, we have {fuel_type_list} for you to choose\n>")
-    single_string_input(fuel_type_list,'fuelType',type_input,csvsort,fuel_type_choose)
+    single_string_input(fuel_type_list,'fuelType',type_input,pandas_data,fuel_type_choose)
 
 def select_set(model):
     """Function to create the selection list for model, fuel, and transmission type"""
@@ -46,7 +55,7 @@ def select_set(model):
             pass
     return type_list
 
-def single_string_input(user_list,search_type,user_input,csvsort,function_name):
+def single_string_input(user_list,search_type,user_input,pandas_data,function_name):
     """ Helping function based on
         model, fuel and transmission
         input, and filter the result """
@@ -57,51 +66,52 @@ def single_string_input(user_list,search_type,user_input,csvsort,function_name):
             user_search=True
     # Filter the data based on the user input
     if user_search:
-        for index, data in csvsort.copy(deep=False).iterrows():
+        for index, data in pandas_data.copy(deep=False).iterrows():
             if data[search_type].strip().lower()!=user_input.strip().lower():
-                csvsort.drop(index, inplace=True)
+                pandas_data.drop(index, inplace=True)
     else:
         print(ft.apply("\n Invalid input. Please try again", 'red_bg'))
-        function_name(csvsort)
+        function_name(pandas_data)
 
-def range_number_input(lowest_value,highest_value,search_type,csvsort,function_name):
+def range_number_input(lowest_value,highest_value,search_type,pandas_data,function_name):
     """ Helping function based on
         input range (number), and
         filter the result """
     try:
-        price_list=[int(lowest_value),int(highest_value)]
-        price_list.sort() #in case user put min_price>max_price, auto fix this bug
+        range_list=[int(lowest_value),int(highest_value)]
+        range_list.sort() #in case user put min_price>max_price, auto fix this bug
         # Use df.copy() to avoid locate bug if you try to remove element from origional list
-        if price_list[0]>=csvsort[search_type].min() and price_list[1]<=csvsort[search_type].max():
-            for index, price in csvsort.copy(deep=False).iterrows():
-                if price[search_type]<price_list[0] or price[search_type]>price_list[1]:
+        if range_list[0]>=pandas_data[search_type].min() and \
+            range_list[1]<=pandas_data[search_type].max():
+            for index, data in pandas_data.copy(deep=False).iterrows():
+                if data[search_type]<range_list[0] or data[search_type]>range_list[1]:
                     # Drop the value with current index data when price is not in the range
-                    csvsort.drop(index, inplace=True)
+                    pandas_data.drop(index, inplace=True)
         else:
             print(ft.apply("\n Please enter "\
                  "the number within the range we provided \n"))
-            price_choose(csvsort)
+            function_name(pandas_data)
     except ValueError:
         print(ft.apply("\n Invalid input, Please try again", 'red_bg'))
-        function_name(csvsort)
+        function_name(pandas_data)
 
-def convert_to_excel(csvsort):
+def convert_to_excel(pandas_data):
     """Function to show the data or convert it to excel with xlsx form"""
     convert=input(" Do you want to convert it to a excel file? [Y/n]\n>")
     if convert.lower()=='y':
         file_name=input("Please enter the name for the file\n>")
         try:
             print(ft.apply("\nCreating the Excel...", 'green_bg'))
-            pd.DataFrame(csvsort).to_excel(f"{file_name}.xlsx", index=False)
+            pd.DataFrame(pandas_data).to_excel(f"{file_name}.xlsx", index=False)
             end="File Is Created! Thanks For Using"
             print(ft.apply(pf.figlet_format(end, font = "digital" ), 'yellow'))
         except ValueError:
             print(ft.apply("\n Invalid input, Please try again\n", 'red_bg'))
-            convert_to_excel(csvsort)
+            convert_to_excel(pandas_data)
     elif convert.lower()=='n':
-        print(csvsort)
-        print(f' Result: Total {len(csvsort.index)} vehicles meet your requirement')
+        print(pandas_data)
+        print(f' Result: Total {len(pandas_data.index)} vehicles meet your requirement')
         end="Thanks For Using"
         print(ft.apply(pf.figlet_format(end, font = "digital" ), 'yellow'))
     else:
-        convert_to_excel(csvsort)
+        convert_to_excel(pandas_data)

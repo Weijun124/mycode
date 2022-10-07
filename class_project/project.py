@@ -11,11 +11,12 @@ import fontstyle as ft
 import pyfiglet as pf
 from function import model_choose
 from function import price_choose
+from function import mileage_choose
 from function import transmission_type
 from function import fuel_type_choose
 from function import convert_to_excel
 
-def start_run(csvsort):
+def start_run(pandas_data):
     """Main Application Workflow start at this function"""
     print(ft.apply(pf.figlet_format("' Toyota used car listing ' "\
         "for you to use", font = "slant" ), 'yellow'))
@@ -23,15 +24,16 @@ def start_run(csvsort):
          " the list. Press 'q' to retype the file name. Press other for specific search\n>"
     user_opt=input(choose)
     if user_opt.lower()=='y':
-        convert_to_excel(csvsort)
+        convert_to_excel(pandas_data)
     elif user_opt.lower()=='q':
         main()
     else:
-        model_choose(csvsort)
-        price_choose(csvsort)
-        transmission_type(csvsort)
-        fuel_type_choose(csvsort)
-        convert_to_excel(csvsort)
+        model_choose(pandas_data)
+        price_choose(pandas_data)
+        mileage_choose(pandas_data)
+        transmission_type(pandas_data)
+        fuel_type_choose(pandas_data)
+        convert_to_excel(pandas_data)
 
 def main():
     """ Load the csv file and sorted by model's alphabet order a=>z
@@ -42,8 +44,8 @@ def main():
         file_name = input("Enter the file name you want to search"\
                     " (Press Enter for default file 'toyota_data.csv') \n>") or default
         data=pd.read_csv(file_name)
-        csvsort=data.sort_values('model',ignore_index=True) # reorder the index after sort
-        start_run(csvsort)
+        pandas_data=data.sort_values('model',ignore_index=True) # reorder the index after sort
+        start_run(pandas_data)
     except FileNotFoundError as error:
         print(f'{error}, please enter correct file name\n')
         main()
