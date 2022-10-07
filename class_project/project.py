@@ -30,8 +30,8 @@ def start_run(pandas_data):
     else:
         model_choose(pandas_data)
         price_choose(pandas_data)
-        mileage_choose(pandas_data)
         transmission_type(pandas_data)
+        mileage_choose(pandas_data)
         fuel_type_choose(pandas_data)
         convert_to_excel(pandas_data)
 
