@@ -6,6 +6,7 @@
     and create their own excel based on this CSV file as Demo
     Data website: https://www.kaggle.com/datasets/mysarahmadbhat/toyota-used-car-listing """
 
+import os
 import pandas as pd
 import fontstyle as ft
 import pyfiglet as pf
@@ -20,14 +21,16 @@ def start_run(pandas_data):
     """Main Application Workflow start at this function"""
     print(ft.apply(pf.figlet_format("' Toyota used car listing ' "\
         "for you to use", font = "slant" ), 'yellow'))
-    choose=" Press 'y' for checkout all the data in"\
-         " the list. Press 'q' to retype the file name. Press other for specific search\n>"
+    choose=" Press 'y' to checkout all the car infomation."\
+         " Press 'q' to retype the file name. Press other for detail research\n>"
     user_opt=input(choose)
     if user_opt.lower()=='y':
         convert_to_excel(pandas_data)
     elif user_opt.lower()=='q':
+        os.system('clear')
         main()
     else:
+        os.system('clear')
         model_choose(pandas_data)
         price_choose(pandas_data)
         transmission_type(pandas_data)

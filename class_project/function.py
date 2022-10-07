@@ -1,7 +1,10 @@
 """ Alta3 Project | Weijun Huang
     This is helping function file
     to execute the research and coverte file to xlsx """
+
+import os
 import sys
+import time
 import pandas as pd
 import fontstyle as ft
 import pyfiglet as pf
@@ -13,21 +16,22 @@ def model_choose(pandas_data):
         case, user only can do single search """
     model_list=select_set(pandas_data['model'])
     model_input=input(f" What type of model you are looking for?\nWe have {model_list}\n>")
-    print(ft.apply("\nCreating the table...", 'green_bg'))
+    print(ft.apply("\n Creating the table...", 'green_bg'))
     single_string_input(model_list,'model',model_input,pandas_data,model_choose)
 
 def price_choose(pandas_data):
     """ Function for filter the price level """
     sentence=f" (Your current model price range is\n\
  between ${pandas_data['price'].min():,} and ${pandas_data['price'].max():,})"
-    min_price=input(f" Enter the lowest price you want? {sentence}\n>")
-    max_price=input(f" Enter the highest price you want? {sentence}\n>")
+    min_price=input(f"\n Enter the lowest price you want? {sentence}\n>")
+    max_price=input(f"\n Enter the highest price you want? {sentence}\n>")
     range_number_input(min_price,max_price,'price',pandas_data,price_choose)
 
 def transmission_type(pandas_data):
     """ Function for filter the transmission """
     transmission_list=select_set(pandas_data["transmission"])
-    type_input=input(f" Based on your selection, we have {transmission_list} for you to choose\n>")
+    type_input=input(f"\n Based on your selection,\
+ we have {transmission_list} for you to choose\n>")
     single_string_input(transmission_list,"transmission",type_input,pandas_data,transmission_type)
 
 def mileage_choose(pandas_data):
@@ -35,22 +39,24 @@ def mileage_choose(pandas_data):
         the mileage range """
     sentence=f" (Your current mileage range is\n\
  between {pandas_data['mileage'].min():,} miles and {pandas_data['mileage'].max():,} miles)"
-    min_mileage=input(f" Enter the minimum mileage you want? {sentence}\n>")
-    max_mileage=input(f" Enter the maximum mileage you want? {sentence}\n>")
+    min_mileage=input(f"\n Enter the minimum mileage you want? {sentence}\n>")
+    max_mileage=input(f"\n Enter the maximum mileage you want? {sentence}\n>")
     range_number_input(min_mileage,max_mileage,'mileage',pandas_data,mileage_choose)
 
 def fuel_type_choose(pandas_data):
     """ Function for filter the fuel type """
     fuel_type_list=select_set(pandas_data['fuelType'])
-    type_input=input(f" Based on your selection, we have {fuel_type_list} for you to choose\n>")
+    type_input=input(f"\n Based on your selection, we have {fuel_type_list} for you to choose\n>")
     single_string_input(fuel_type_list,'fuelType',type_input,pandas_data,fuel_type_choose)
 
 def convert_to_excel(pandas_data):
     """ Function to show the data or convert it
         to excel with xlsx form. Also can convert
         to json and csv in future need """
+    os.system('clear')
     convert=input(" Do you want to convert it to a excel file? [Y/n]\n>")
     if convert.lower()=='y':
+        print("\n Here is some example data you get\n\n",pandas_data.head(10))
         file_name=input("Please enter the name for the file\n>")
         try:
             print(ft.apply("\nCreating the Excel...", 'green_bg'))
@@ -62,8 +68,8 @@ def convert_to_excel(pandas_data):
             convert_to_excel(pandas_data)
     elif convert.lower()=='n':
         print(pandas_data)
-        print(f' Result: Total {len(pandas_data.index)} vehicles meet your requirement')
-        end="Thanks For Using"
+        print(f'\n Result: Total {len(pandas_data.index)} vehicles meet your requirement')
+        end="\nThanks For Using"
         print(ft.apply(pf.figlet_format(end, font = "digital" ), 'yellow'))
     else:
         convert_to_excel(pandas_data)
@@ -102,6 +108,8 @@ def single_string_input(user_list,search_type,user_input,pandas_data,function_na
                 pandas_data.drop(index, inplace=True)
     else:
         print(ft.apply("\n Invalid input. Please try again", 'red_bg'))
+        time.sleep(1)
+        os.system('clear')
         function_name(pandas_data)
 
 def range_number_input(lowest_value,highest_value,search_type,pandas_data,function_name):
@@ -124,4 +132,6 @@ def range_number_input(lowest_value,highest_value,search_type,pandas_data,functi
             function_name(pandas_data)
     except ValueError:
         print(ft.apply("\n Invalid input, Please try again", 'red_bg'))
+        time.sleep(1)
+        os.system('clear')
         function_name(pandas_data)
